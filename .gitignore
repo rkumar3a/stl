@@ -1,1 +1,5 @@
 /.vscode
+person
+*.o
+stldemo
+*.tar

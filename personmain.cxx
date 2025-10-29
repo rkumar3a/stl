@@ -16,6 +16,15 @@ inline double BMI(const double weight, const double height) {
 	return (weight / (height * height)) * 703.0;
 }
 
+struct CmpLessBMI {
+	const bool operator()(Person x, double y) {return BMI(x.getWeight(), x.getHeight()) < y; }
+};
+
+struct genderedBMI {
+	double BMI;
+	Person::Gender gender;
+};
+
 int main(int argc, char *argv[]) {
     std::vector<Person> plist;
     Person p;
@@ -31,6 +40,8 @@ int main(int argc, char *argv[]) {
     while (std::cin >> p)
         plist.push_back(p);
 
+	auto it = lower_bound(plist.begin(), plist.end(), p);
+	cout << setprecision(2);
 
 	/*
 	 * Students to do:
@@ -46,6 +57,17 @@ int main(int argc, char *argv[]) {
 	 * For the above, must use each of the below at least once.
 	 * Function pointer, lambda function, and functor
 	 */
+	cout << "Person at or more than the target BMI and of the target gender:" << endl;
+	if ((it = lower_bound(plist.begin(), plist.end(), nullptr, [targetBMI, targetGender](Person x, void * ignore) { return (BMI(x.getWeight(), x.getHeight()) < targetBMI) || (x.getGender() != targetGender); })) != plist.end())
+		cout << "Found " << *it << ": " << BMI(it->getWeight(), it->getHeight()) << " >= " << targetBMI << " gender is: " << it->getGender() << endl;
+	else
+		cout << "No person found." << endl;
 
+	cout << "First person at or more than the target BMI:" << endl;
+	CmpLessBMI lessFunctor;
+	if ((it = lower_bound(plist.begin(), plist.end(), targetBMI, lessFunctor)) != plist.end())
+		cout << "Found " << *it << ": " << BMI(it->getWeight(), it->getHeight()) << " >= " << targetBMI << endl;
+	else
+		cout << "No person found." << endl;
 	return EXIT_SUCCESS;
 }
