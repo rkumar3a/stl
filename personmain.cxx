@@ -20,11 +20,6 @@ struct CmpLessBMI {
 	const bool operator()(Person x, double y) {return BMI(x.getWeight(), x.getHeight()) < y; }
 };
 
-struct genderedBMI {
-	double BMI;
-	Person::Gender gender;
-};
-
 int main(int argc, char *argv[]) {
     std::vector<Person> plist;
     Person p;
@@ -40,16 +35,14 @@ int main(int argc, char *argv[]) {
     while (std::cin >> p)
         plist.push_back(p);
 
-	auto it = lower_bound(plist.begin(), plist.end(), p);
-	cout << setprecision(2);
-
+	vector<Person>::iterator it;
 	/*
 	 * Students to do:
-	 * 1. Compute percentage of people within each BMI range.
-	 * 2. Sort the records by gender then by last name.
-	 * 3. Find the first person at or more than the target height
-	 * 4. Find the person at or just more than the target weight and of the target gender
-	 * 5. Find the first person at or more than the target BMI.
+	 * Counter the number of records fall into each of the BMI range. Compute the proportion.  Output the percentage for each range. Use “std::map” to count for each range.
+     * Use “std::sort” to sort the vector first by gender and by last name. Output the entire vector using vector iterator.  Note the provided code already overloaded the formatted output operator “<<”.
+	 * Find the first person at or taller than “targetHeight”.
+	 * Find the first person at or heavier than the “targetWeight” and of the “targetGender.”
+     * Find the first person at or more than the “targetBMI.”
 	 *
 	 * For 1, use "std::map" to collect the count.
 	 * For 2 to 5, make use of the C++ "iterator" feature.
@@ -57,17 +50,17 @@ int main(int argc, char *argv[]) {
 	 * For the above, must use each of the below at least once.
 	 * Function pointer, lambda function, and functor
 	 */
-	cout << "Person at or more than the target BMI and of the target gender:" << endl;
-	if ((it = lower_bound(plist.begin(), plist.end(), nullptr, [targetBMI, targetGender](Person x, void * ignore) { return (BMI(x.getWeight(), x.getHeight()) < targetBMI) || (x.getGender() != targetGender); })) != plist.end())
-		cout << "Found " << *it << ": " << BMI(it->getWeight(), it->getHeight()) << " >= " << targetBMI << " gender is: " << it->getGender() << endl;
+	cout << "Person at or more than the target weight and of the target gender:" << endl;
+	if ((it = find_if(plist.begin(), plist.end(), [targetWeight, targetGender](Person x) { return x.getWeight() >= targetWeight && x.getGender() == targetGender; })) != plist.end())
+		cout << *it << ": " << setprecision(2) << it->getWeight() << " >= " << targetWeight << " && " << it->getGender() << " == " << targetGender << endl;
 	else
-		cout << "No person found." << endl;
+		cout << "None." << endl;
 
 	cout << "First person at or more than the target BMI:" << endl;
 	CmpLessBMI lessFunctor;
 	if ((it = lower_bound(plist.begin(), plist.end(), targetBMI, lessFunctor)) != plist.end())
-		cout << "Found " << *it << ": " << BMI(it->getWeight(), it->getHeight()) << " >= " << targetBMI << endl;
+		cout << *it << ": " << setprecision(2) << BMI(it->getWeight(), it->getHeight()) << " >= " << targetBMI << endl;
 	else
-		cout << "No person found." << endl;
+		cout << "None." << endl;
 	return EXIT_SUCCESS;
 }
