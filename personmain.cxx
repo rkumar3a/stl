@@ -23,6 +23,7 @@ struct CmpLessBMI {
 int main(int argc, char *argv[]) {
     std::vector<Person> plist;
     Person p;
+	
 	constexpr double targetHeight = 70.0;
 	constexpr double targetWeight = 150.0;
 	const double targetBMI = BMI(targetWeight, targetHeight);
@@ -88,7 +89,7 @@ int main(int argc, char *argv[]) {
 	 }
 
 
-	 
+
 	cout << "First person at or taller than the target height:" << endl;
 	if ((it = find_if(plist.begin(), plist.end(), [targetHeight](Person x) {return x.getHeight() >= targetHeight; })) != plist.end())
 		cout << *it << ": " << setprecision(2) << it->getHeight() << " >= " << targetHeight << endl;
